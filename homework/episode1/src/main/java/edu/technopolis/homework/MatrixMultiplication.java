@@ -8,12 +8,27 @@ package main.java.edu.technopolis.homework;
 
 public class MatrixMultiplication {
     public static void main(String... args) {
-        int[][] matrixA = new int[Integer.parseInt(args[0])][ Integer.parseInt(args[1])];
-        int[][] matrixB = new int[Integer.parseInt(args[2])][ Integer.parseInt(args[3])];
+        if (args.length < 6) {
+            System.out.println("not enough arguments");
+            return;
+        }
+
+        int N = Integer.parseInt(args[0]);
+        int M = Integer.parseInt(args[1]);
+        int X = Integer.parseInt(args[2]);
+        int Y = Integer.parseInt(args[3]);
+
+        int[][] matrixA = new int[N][M];
+        int[][] matrixB = new int[X][Y];
         int pos = 4;
 
+        if (args.length != (N*M + X*Y + 4)) {
+            System.out.println("not enough arguments");
+            return;
+        }
+
         if (matrixA[0].length != matrixB.length) {
-            System.out.println("cant multiply this matrix");
+            System.out.println("can't multiply this matrix");
             return;
         }
 
@@ -57,7 +72,7 @@ public class MatrixMultiplication {
         StringBuilder build = new StringBuilder();
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
-                build.append(String.format("%-5d ", matrix[i][j]));
+                build.append(matrix[i][j]);
             }
             build.append("\n");
         }
