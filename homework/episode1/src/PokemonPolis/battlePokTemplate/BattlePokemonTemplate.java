@@ -3,7 +3,7 @@ package PokemonPolis.battlePokTemplate;
 /**
  * Created by iters on 11/10/16.
  */
-public interface BattlePokemon {
+public interface BattlePokemonTemplate {
     float hitByRightHand();
 
     float hitByLefttHand();

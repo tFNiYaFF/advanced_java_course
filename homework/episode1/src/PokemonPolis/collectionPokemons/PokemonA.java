@@ -5,27 +5,27 @@ import PokemonPolis.abstractPokemons.BasicBattlePokemon;
 /**
  * Created by iters on 11/10/16.
  */
-public class Picachu extends BasicBattlePokemon {
+public class PokemonA extends BasicBattlePokemon {
     private boolean isSleep = false;
 
     @Override
     public float hitByRightHand() {
-        return (float) (hitByRightHand() + Math.random() * 10);
+        return hitByRightHand();
     }
 
     @Override
     public float hitByLefttHand() {
-        return (float) (hitByLefttHand() + Math.random() * 10);
+        return hitByLefttHand();
     }
 
     @Override
     public float hitByRightFoot() {
-        return (float) (hitByRightFoot() + Math.random() * 15);
+        return hitByRightFoot();
     }
 
     @Override
     public float hitByLeftFoot() {
-        return (float) (hitByLeftFoot() + Math.random() * 15);
+        return hitByLeftFoot();
     }
 
     @Override

@@ -1,11 +1,11 @@
 package PokemonPolis.abstractPokemons;
 
-import PokemonPolis.battlePokTemplate.BattlePokemon;
+import PokemonPolis.battlePokTemplate.BattlePokemonTemplate;
 
 /**
  * Created by iters on 11/10/16.
  */
-public abstract class BasicBattlePokemon extends BasicPokemon implements BattlePokemon {
+public abstract class BasicBattlePokemon extends BasicPokemon implements BattlePokemonTemplate {
     private float rightHandHit;
     private float leftHandHit;
     private float rightFootHit;
