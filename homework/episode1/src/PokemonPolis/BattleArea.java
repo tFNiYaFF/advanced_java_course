@@ -3,9 +3,9 @@ package PokemonPolis;
 import PokemonPolis.collectionPokemons.PokemonA;
 import PokemonPolis.pokemonBuilder.DirectorBuilder;
 import PokemonPolis.pokemonBuilder.PokemonBuilderA;
-
-import java.util.Random;
-import java.util.Scanner;
+import PokemonPolis.trainer.PokemonAutoTrainer;
+import PokemonPolis.trainer.PokemonTrainer;
+import java.io.BufferedInputStream;
 
 /**
  * Created by iters on 11/11/16.
@@ -18,72 +18,19 @@ public class BattleArea {
         PokemonA picachu = (PokemonA) director.buildPokemon();
         PokemonA picachuBot = (PokemonA) director.buildPokemon();
 
-        Scanner scan = new Scanner(System.in);
+        PokemonTrainer trainerPicachu = new PokemonTrainer((BufferedInputStream) System.in,
+                picachu, picachuBot);
+        PokemonTrainer trainerPicachuBot = new PokemonAutoTrainer((BufferedInputStream) System.in,
+                picachuBot, picachu);
+
         while (picachu.getCurrentHealth() > 0 && picachuBot.getCurrentHealth() > 0) {
             printCmd();
-            int cmd = scan.nextInt();
-            switch (cmd) {
-                case 1:
-                    picachuBot.subtractHP(picachu.hitByRightHand());
-                    System.out.println("after attack by right hand Bot has "
-                            + picachuBot.getCurrentHealth());
-                    break;
-                case 2:
-                    picachuBot.subtractHP(picachu.hitByLefttHand());
-                    System.out.println("after attack by left hand Bot has "
-                            + picachuBot.getCurrentHealth());
-                    break;
-                case 3:
-                    picachuBot.subtractHP(picachu.hitByLeftFoot());
-                    System.out.println("after attack by left foot Bot has "
-                            + picachuBot.getCurrentHealth());
-                    break;
-                case 4:
-                    picachuBot.subtractHP(picachu.hitByRightFoot());
-                    System.out.println("after attack by right foot Bot has "
-                            + picachuBot.getCurrentHealth());
-                    break;
-                case 5:
-                    picachu.defend();
-                    System.out.println("I defends!");
-                    break;
-                default:
-                    continue;
-            }
+            System.out.println(trainerPicachu.battleCmd());
 
             if (picachuBot.getCurrentHealth() < 0) {
                 break;
             }
-
-            Random rnd = new Random();
-            cmd = rnd.nextInt(5) + 1;
-
-            switch (cmd) {
-                case 1:
-                    picachu.subtractHP(picachuBot.hitByRightHand());
-                    System.out.println("You was attacked by bot by right hand. You have  "
-                            + picachu.getCurrentHealth() + "HP");
-                    break;
-                case 2:
-                    picachu.subtractHP(picachuBot.hitByLefttHand());
-                    System.out.println("You was attacked by bot by left hand. You have  "
-                            + picachu.getCurrentHealth() + "HP");
-                    break;
-                case 3:
-                    picachu.subtractHP(picachuBot.hitByLeftFoot());
-                    System.out.println("You was attacked by bot by left foot. You have  "
-                            + picachu.getCurrentHealth() + "HP");
-                    break;
-                case 4:
-                    picachu.subtractHP(picachuBot.hitByRightFoot());
-                    System.out.println("You was attacked by bot by right foot. You have  "
-                            + picachu.getCurrentHealth() + "HP");
-                    break;
-                case 5:
-                    picachuBot.defend();
-                    System.out.println("Bot defends!");
-                    break;
-            }
+            System.out.println(trainerPicachuBot.battleCmd());
         }
 
         if (picachu.getCurrentHealth() > picachuBot.getCurrentHealth()) {
@@ -93,8 +40,8 @@ public class BattleArea {
         }
     }
 
-    public static void printCmd() {
-        System.out.println("Enter a number: ");
+    private static void printCmd() {
+        System.out.println("\nEnter a number:");
         System.out.println("1 : hit by right hand");
         System.out.println("2 : hit by left hand");
         System.out.println("3 : hit by left foot");
