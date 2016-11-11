@@ -33,6 +33,22 @@ public abstract class BasicBattlePokemon extends BasicPokemon implements BattleP
         this.leftFootHit = leftFootHit;
     }
 
+    public float getRightHandHit() {
+        return rightHandHit;
+    }
+
+    public float getLeftHandHit() {
+        return leftHandHit;
+    }
+
+    public float getRightFootHit() {
+        return rightFootHit;
+    }
+
+    public float getLeftFootHit() {
+        return leftFootHit;
+    }
+
     public boolean isDefending() {
         return defending;
     }

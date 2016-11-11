@@ -10,22 +10,22 @@ public class PokemonA extends BasicBattlePokemon {
 
     @Override
     public float hitByRightHand() {
-        return hitByRightHand();
+        return getRightHandHit();
     }
 
     @Override
     public float hitByLefttHand() {
-        return hitByLefttHand();
+        return getLeftHandHit();
     }
 
     @Override
     public float hitByRightFoot() {
-        return hitByRightFoot();
+        return getRightFootHit();
     }
 
     @Override
     public float hitByLeftFoot() {
-        return hitByLeftFoot();
+        return getLeftFootHit();
     }
 
     @Override

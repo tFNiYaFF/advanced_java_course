@@ -19,7 +19,7 @@ public class BattleArea {
         PokemonA picachuBot = (PokemonA) director.buildPokemon();
 
         Scanner scan = new Scanner(System.in);
-        while (picachu.getCurrentHealth() != 0 && picachuBot.getCurrentHealth() != 0) {
+        while (picachu.getCurrentHealth() > 0 && picachuBot.getCurrentHealth() > 0) {
             printCmd();
             int cmd = scan.nextInt();
             switch (cmd) {
@@ -51,6 +51,10 @@ public class BattleArea {
                     continue;
             }
 
+            if (picachuBot.getCurrentHealth() < 0) {
+                break;
+            }
+
             Random rnd = new Random();
             cmd = rnd.nextInt(5) + 1;
 
@@ -80,6 +84,12 @@ public class BattleArea {
                     System.out.println("Bot defends!");
                     break;
             }
+        }
+
+        if (picachu.getCurrentHealth() > picachuBot.getCurrentHealth()) {
+            System.out.println("YOU WINS!!!!");
+        } else {
+            System.out.println("BOT WINS!!!!");
         }
     }
 
