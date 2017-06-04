@@ -8,12 +8,14 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import edu.technopolis.homework.messenger.messages.Message;
-import edu.technopolis.homework.messenger.messages.TextMessage;
-import edu.technopolis.homework.messenger.messages.Type;
+import com.mysql.jdbc.StringUtils;
+import edu.technopolis.homework.messenger.messages.*;
 import edu.technopolis.homework.messenger.net.Protocol;
 import edu.technopolis.homework.messenger.net.ProtocolException;
 import edu.technopolis.homework.messenger.net.StringProtocol;
+import sun.nio.cs.ext.MS950;
+
+import javax.xml.soap.Text;
 
 
 /**
@@ -27,6 +29,8 @@ public class MessengerClient {
     private Protocol protocol;
     private int port;
     private String host;
+
+    private boolean login = false;
 
     /**
      * С каждым сокетом связано 2 канала in/out
@@ -92,7 +96,28 @@ public class MessengerClient {
      * Реагируем на входящее сообщение
      */
     public void onMessage(Message msg) {
-        System.err.println("Message received:  " + msg);
+        switch (msg.getType()){
+            case MSG_STATUS:
+                StatusMessage statusMessage = (StatusMessage) msg;
+                if(statusMessage.getStatus()){
+                    login = true;
+                    System.out.println(statusMessage.getInfo());
+                }
+                else{
+                    System.err.println(statusMessage.getInfo());
+                }
+                break;
+            case MSG_CHAT_HIST_RESULT:
+                ChatHistoryResult chatHistoryResult = (ChatHistoryResult) msg;
+                for(int i=0; i<chatHistoryResult.getMessages().size(); i++){
+                    System.out.println(chatHistoryResult.getMessages().get(i).getSenderId()+": "+chatHistoryResult.getMessages().get(i).getText());
+                }
+                break;
+            default:
+                System.err.println("Message received:  " + msg);
+                break;
+        }
+
     }
 
     /**
@@ -101,21 +126,82 @@ public class MessengerClient {
      */
     public void processInput(String line) throws IOException, ProtocolException {
         String[] tokens = line.split(" ");
-        System.out.println("Tokens: " + Arrays.toString(tokens));
+       // System.out.println("Tokens: " + Arrays.toString(tokens));
         String cmdType = tokens[0];
         switch (cmdType) {
             case "/login":
-                // TODO: реализация
+                LoginMessage sendLogin = new LoginMessage();
+                sendLogin.setLogin(tokens[1]);
+                sendLogin.setPassword(tokens[2]);
+                sendLogin.setType(Type.MSG_LOGIN);
+                send(sendLogin);
                 break;
             case "/help":
                 // TODO: реализация
                 break;
             case "/text":
-                // FIXME: пример реализации для простого текстового сообщения
-                TextMessage sendMessage = new TextMessage();
-                sendMessage.setType(Type.MSG_TEXT);
-                sendMessage.setText(tokens[1]);
-                send(sendMessage);
+                if (login) {
+                    if (tokens.length>2){
+                        TextMessage sendMessage = new TextMessage();
+                        sendMessage.setType(Type.MSG_TEXT);
+                        sendMessage.setChatId(Long.parseLong(tokens[1]));
+                        sendMessage.setText(tokens[2]);
+                        send(sendMessage);
+                    }
+
+                } else {
+                    System.out.println("You can not execute his command. Please, login");
+                }
+                break;
+            case "/info":
+                if (login) {
+                    InfoMessage infoMes = new InfoMessage();
+                    infoMes.setType(Type.MSG_INFO);
+                    if (tokens.length == 1) {
+                    } else {
+                        infoMes.setUserInfoId(Long.parseLong(tokens[1]));
+                    }
+                    send(infoMes);
+                } else {
+                    System.out.println("You can not execute his command. Please, login");
+                }
+
+                break;
+            case "/chat_list":
+                if (login){
+                    ChatListMessage chatListMessage = new ChatListMessage();
+                    chatListMessage.setType(Type.MSG_CHAT_LIST);
+                    send(chatListMessage);
+                }else{
+                    System.out.println("You can not execute his command. Please, login");
+                }
+                break;
+            case "/chat_create":
+                if (login){
+                    if (tokens.length>1) {
+                        ChatCreateMessage chatCreateMessage = new ChatCreateMessage();
+                        chatCreateMessage.setType(Type.MSG_CHAT_CREATE);
+                        for (int i = 1; i < tokens.length; i++) {
+                            chatCreateMessage.add(Long.parseLong(tokens[i]));
+                        }
+                        send(chatCreateMessage);
+                        }else{
+                        System.out.println("Incompleted command");
+                    }
+                }else{
+                    System.out.println("You can not execute his command. Please, login");
+                }
+                break;
+            case "/chat_history":
+                if (login && tokens.length>1){
+                    ChatHistoryMessage chatHistoryMessage = new ChatHistoryMessage();
+                    chatHistoryMessage.setChatId(Long.parseLong(tokens[1]));
+                    chatHistoryMessage.setType(Type.MSG_CHAT_HIST);
+                    send(chatHistoryMessage);
+                }
+                else{
+                    System.out.println("Incompleted command");
+                }
                 break;
             // TODO: implement another types from wiki
 
@@ -128,7 +214,7 @@ public class MessengerClient {
      * Отправка сообщения в сокет клиент -> сервер
      */
     public void send(Message msg) throws IOException, ProtocolException {
-        System.out.println(msg);
+        //System.out.println(msg);
         out.write(protocol.encode(msg));
         out.flush(); // принудительно проталкиваем буфер с данными
     }
